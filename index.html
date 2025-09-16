@@ -1,21 +1,293 @@
-<!DOCTYPE html>
 <html lang="en">
 
-</html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobilizing Citizenship Toolkit</title>
-    <link rel="stylesheet" href="assets/style.css">
+    <title>Mobile Citizenship Toolkit - Kunsthall Stavanger</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
 
-    <a href="gallery.html">
-        Gallery   
-    </a>
-    <br>
-    <a href="post.html">
-        essay   
-    </a>    
-</body> 
+<body>
+    <div id="left">
+        <div class="grid-1">
+            <div class="collection collection-1">
+                <div class="entry" id="article-1">Essay/Journey: Reflection notes Alchemy/Mikey</div>
+                <div class="entry-empty"></div>
+                <div class="entry" id="article-2" style="background-color: #AF8F67;">LESSON PLAN: Workshop model,
+                    practical guide</div>
+            </div>
+            <div class="collection collection-2">
+                <div class="entry" id="article-1">Are You Listening? Deep Listening as Youth Pedagogy </div>
+                <div class="entry-empty"></div>
+                <div class="entry" id="article-2" style="background-color: #AF8F67;">Game, prompt</div>
+            </div>
+            <div class="collection collection-3">
+                <div class="entry" id="article-1">Lee + Kristina timeline</div>
+                <div class="entry-empty"></div>
+                <div class="entry" id="article-2" style="background-color: #C9FF34;">Vox Pop from Alchemy week</div>
+            </div>
+            <div class="collection collection-4">
+                <div class="entry" id="article-1">A Space for Agency: Walk of Shame on Cultivating Collective ...</div>
+                <div class="entry-empty"></div>
+                <div class="entry" id="article-2" style="background-color: #FF71E3;">Why Are Youth Workers Essential
+                    When Creating Meaningful ...</div>
+            </div>
+            <div class="middle">
+                <button class="rotate-button">↻</button>
+            </div>
+        </div>
+    </div>
+    <audio src="https://raw.githubusercontent.com/cartalan/Xilofono-Exercise/master/sound/1-DO.mp3" class="sound"
+        id="sound1"></audio>
+    <audio src="https://raw.githubusercontent.com/cartalan/Xilofono-Exercise/master/sound/2-RE.mp3" class="sound"
+        id="sound2"></audio>
+    <audio src="https://raw.githubusercontent.com/cartalan/Xilofono-Exercise/master/sound/3-MI.mp3" class="sound"
+        id="sound3"></audio>
+    <audio src="https://raw.githubusercontent.com/cartalan/Xilofono-Exercise/master/sound/4-FA.mp3" class="sound"
+        id="sound4"></audio>
+    <audio src="https://raw.githubusercontent.com/cartalan/Xilofono-Exercise/master/sound/5-SOL.mp3" class="sound"
+        id="sound5"></audio>
+    <audio src="https://raw.githubusercontent.com/cartalan/Xilofono-Exercise/master/sound/6-LA.mp3" class="sound"
+        id="sound6"></audio>
+    <audio src="https://raw.githubusercontent.com/cartalan/Xilofono-Exercise/master/sound/7-SI.mp3" class="sound"
+        id="sound7"></audio>
+    <audio src="https://raw.githubusercontent.com/cartalan/Xilofono-Exercise/master/sound/8-DO.mp3" class="sound"
+        id="sound8"></audio>
+    <div id="right">
+        <div class="top-drawer"><h3>Mobile<br>Citizenship<br>Toolkit</h3></div>
+        <div class="top">
+            <div class="quote">Quotes here...</div>
+        </div>
+        <div class="bottom-drawer"></div>
+        <div class="bottom">
+            <div class="album-preview"></div>
+            <div class="gallery">2023 MC Photos</div>
+        </div>
+    </div>
+
+    <script>
+        // Grid rotation functionality
+        const rotateButton = document.querySelector('.rotate-button');
+        const grid = document.querySelector('.grid-1');
+        let rotation = 0;
+
+        rotateButton.addEventListener('click', () => {
+            rotation = (rotation + 90) % 360;
+            grid.style.transform = `rotate(${rotation}deg)`;
+        });
+
+        // Xylophone effect for "Mobile Citizenship Toolkit"
+        function setupXylophoneEffect() {
+            const topDrawer = document.querySelector('.top-drawer');
+            const text = topDrawer.textContent;
+
+            // Create an array of the sound elements
+            const sounds = [
+                document.getElementById('sound1'),
+                document.getElementById('sound2'),
+                document.getElementById('sound3'),
+                document.getElementById('sound4'),
+                document.getElementById('sound5'),
+                document.getElementById('sound6'),
+                document.getElementById('sound7'),
+                document.getElementById('sound8')
+            ];
+
+            // Wrap each letter while preserving the original HTML structure
+            const walker = document.createTreeWalker(topDrawer, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            let soundCounter = 0;
+
+            while (node = walker.nextNode()) {
+                if (node.nodeValue.trim() === '') continue;
+
+                const parent = node.parentNode;
+                const newContent = document.createDocumentFragment();
+
+                for (let i = 0; i < node.nodeValue.length; i++) {
+                    const char = node.nodeValue[i];
+
+                    if (char === ' ' || char === '\n') {
+                        newContent.appendChild(document.createTextNode(char));
+                        continue;
+                    }
+
+                    const letter = document.createElement('span');
+                    letter.className = 'letter';
+                    letter.textContent = char;
+
+                    const soundIndex = soundCounter % sounds.length;
+                    letter.addEventListener('mouseenter', () => {
+                        sounds[soundIndex].currentTime = 0;
+                        sounds[soundIndex].play();
+                    });
+
+                    newContent.appendChild(letter);
+                    soundCounter++;
+                }
+
+                parent.replaceChild(newContent, node);
+            }
+        }
+
+        // Drawer dragging functionality with partial visibility
+        const topDrawer = document.querySelector('.top-drawer');
+        const bottomDrawer = document.querySelector('.bottom-drawer');
+
+        // Store original positions
+        const originalTopPosition = 0;
+        const originalBottomPosition = 0;
+
+        let isDraggingTop = false;
+        let startYTop, startTranslateTop, currentTranslateTop = 0;
+
+        let isDraggingBottom = false;
+        let startYBottom, startTranslateBottom, currentTranslateBottom = 0;
+
+        // Top drawer drag events
+        topDrawer.addEventListener('mousedown', (e) => {
+            isDraggingTop = true;
+            startYTop = e.clientY;
+            startTranslateTop = currentTranslateTop;
+            topDrawer.style.transition = 'none';
+            e.preventDefault();
+        });
+
+        // Bottom drawer drag events
+        bottomDrawer.addEventListener('mousedown', (e) => {
+            isDraggingBottom = true;
+            startYBottom = e.clientY;
+            startTranslateBottom = currentTranslateBottom;
+            bottomDrawer.style.transition = 'none';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDraggingTop) {
+                const deltaY = e.clientY - startYTop;
+                // Allow dragging both up and down, with limits
+                currentTranslateTop = Math.min(Math.max(startTranslateTop + deltaY, -topDrawer.offsetHeight + 120), topDrawer.offsetHeight * 0.4);
+
+                // Apply the transformation
+                topDrawer.style.transform = `translateY(${currentTranslateTop}px)`;
+            }
+
+            if (isDraggingBottom) {
+                const deltaY = e.clientY - startYBottom;
+                // Allow dragging both up and down, with limits
+                currentTranslateBottom = Math.min(Math.max(startTranslateBottom + deltaY, -bottomDrawer.offsetHeight * 0.4), bottomDrawer.offsetHeight - 40);
+
+                // Apply the transformation
+                bottomDrawer.style.transform = `translateY(${currentTranslateBottom}px)`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDraggingTop) {
+                isDraggingTop = false;
+                topDrawer.style.transition = 'transform 0.3s ease';
+
+                // Snap to positions
+                if (currentTranslateTop < -topDrawer.offsetHeight * 0.7) {
+                    // Snap mostly hidden (but show a little)
+                    currentTranslateTop = -topDrawer.offsetHeight + 40;
+                } else if (currentTranslateTop < -topDrawer.offsetHeight * 0.3) {
+                    // Snap to middle position
+                    currentTranslateTop = -topDrawer.offsetHeight * 0.5;
+                } else {
+                    // Snap fully open
+                    currentTranslateTop = 0;
+                }
+
+                topDrawer.style.transform = `translateY(${currentTranslateTop}px)`;
+            }
+
+            if (isDraggingBottom) {
+                isDraggingBottom = false;
+                bottomDrawer.style.transition = 'transform 0.3s ease';
+
+                // Snap to positions
+                if (currentTranslateBottom > bottomDrawer.offsetHeight * 0.7) {
+                    // Snap mostly hidden (but show a little)
+                    currentTranslateBottom = bottomDrawer.offsetHeight - 40;
+                } else if (currentTranslateBottom > bottomDrawer.offsetHeight * 0.3) {
+                    // Snap to middle position
+                    currentTranslateBottom = bottomDrawer.offsetHeight * 0.5;
+                } else {
+                    // Snap fully open
+                    currentTranslateBottom = 0;
+                }
+
+                bottomDrawer.style.transform = `translateY(${currentTranslateBottom}px)`;
+            }
+        });
+
+        // Touch events for mobile
+        topDrawer.addEventListener('touchstart', (e) => {
+            isDraggingTop = true;
+            startYTop = e.touches[0].clientY;
+            startTranslateTop = currentTranslateTop;
+            topDrawer.style.transition = 'none';
+            e.preventDefault();
+        });
+
+        bottomDrawer.addEventListener('touchstart', (e) => {
+            isDraggingBottom = true;
+            startYBottom = e.touches[0].clientY;
+            startTranslateBottom = currentTranslateBottom;
+            bottomDrawer.style.transition = 'none';
+            e.preventDefault();
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isDraggingTop) {
+                const deltaY = e.touches[0].clientY - startYTop;
+                currentTranslateTop = Math.min(Math.max(startTranslateTop + deltaY, -topDrawer.offsetHeight + 40), topDrawer.offsetHeight * 0.4);
+                topDrawer.style.transform = `translateY(${currentTranslateTop}px)`;
+            }
+
+            if (isDraggingBottom) {
+                const deltaY = e.touches[0].clientY - startYBottom;
+                currentTranslateBottom = Math.min(Math.max(startTranslateBottom + deltaY, -bottomDrawer.offsetHeight * 0.4), bottomDrawer.offsetHeight - 40);
+                bottomDrawer.style.transform = `translateY(${currentTranslateBottom}px)`;
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            if (isDraggingTop) {
+                isDraggingTop = false;
+                topDrawer.style.transition = 'transform 0.3s ease';
+
+                if (currentTranslateTop < -topDrawer.offsetHeight * 0.7) {
+                    currentTranslateTop = -topDrawer.offsetHeight + 40;
+                } else if (currentTranslateTop < -topDrawer.offsetHeight * 0.3) {
+                    currentTranslateTop = -topDrawer.offsetHeight * 0.5;
+                } else {
+                    currentTranslateTop = 0;
+                }
+
+                topDrawer.style.transform = `translateY(${currentTranslateTop}px)`;
+            }
+
+            if (isDraggingBottom) {
+                isDraggingBottom = false;
+                bottomDrawer.style.transition = 'transform 0.3s ease';
+
+                if (currentTranslateBottom > bottomDrawer.offsetHeight * 0.7) {
+                    currentTranslateBottom = bottomDrawer.offsetHeight - 40;
+                } else if (currentTranslateBottom > bottomDrawer.offsetHeight * 0.3) {
+                    currentTranslateBottom = bottomDrawer.offsetHeight * 0.5;
+                } else {
+                    currentTranslateBottom = 0;
+                }
+
+                bottomDrawer.style.transform = `translateY(${currentTranslateBottom}px)`;
+            }
+        });
+
+        // Initialize the xylophone effect
+        setupXylophoneEffect();
+    </script>
+</body>
+
 </html>
